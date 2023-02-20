@@ -1,9 +1,14 @@
-import { Button, Divider, Dropdown, Form, Input, Space, Tag } from "antd";
-import { FC, useState } from "react";
+import { Button, Divider, Dropdown, Form, Input, Row, Space } from "antd";
+import React, { FC, useState } from "react";
 import { HttpMethod } from "./types/pathItem";
 import { useComponentStore } from "./ApiList";
-import { DownOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { RequestFormItem } from "./RequestForm";
+import Parameter from "./types/parameter";
 
 export interface HttpComponentProps {
   method: HttpMethod;
@@ -47,7 +52,12 @@ const HttpMethodSchemaSwitcher: FC<HttpMethodSchemaSwitcherProps> = ({
         placement={"bottomRight"}
         arrow
       >
-        <Button block style={{ marginBottom: 10 }} icon={<DownOutlined />}>
+        <Button
+          type={"dashed"}
+          block
+          style={{ marginBottom: 10 }}
+          icon={<CaretDownOutlined />}
+        >
           {contentType}
         </Button>
       </Dropdown>
@@ -60,13 +70,81 @@ const HttpMethodSchemaSwitcher: FC<HttpMethodSchemaSwitcherProps> = ({
 };
 
 const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
-  const parameters = method.parameters ?? [];
+  const [additionalParams, setAdditionalParams] = useState<Parameter[]>([]);
+  const parameters = (method.parameters ?? []).concat(additionalParams);
+
+  const [property, setProperty] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [addIn, setAddIn] = useState<"body" | "query" | "header">("body");
+  const inPropertyTypes: Array<"body" | "query" | "header"> = [
+    "body",
+    "query",
+    "header",
+  ];
+
+  const onAddParameter = () => {
+    setAdditionalParams([
+      ...additionalParams,
+      {
+        name: property,
+        in: addIn,
+        required: false,
+        schema: {
+          type: "string",
+        },
+      },
+    ]);
+  };
 
   return (
     <>
-      <>
-        <Button></Button>
-      </>
+      {isAdding ? (
+        <>
+          <Row justify={"space-between"}>
+            <Space direction={"horizontal"} align={"start"}>
+              <Button type={"primary"} onClick={onAddParameter}>
+                <PlusOutlined /> Add
+              </Button>
+              <Form.Item>
+                <Input
+                  placeholder={"property"}
+                  allowClear
+                  value={property}
+                  onChange={(x) => setProperty(x.target.value)}
+                />
+              </Form.Item>
+              <Dropdown
+                menu={{
+                  items: inPropertyTypes.map((inPart) => ({
+                    key: inPart,
+                    label: inPart,
+                    onClick: () => setAddIn(inPart),
+                  })),
+                }}
+              >
+                <Button>
+                  <Space>
+                    {addIn ?? "in"} <CaretDownOutlined />
+                  </Space>
+                </Button>
+              </Dropdown>
+            </Space>
+
+            <Button shape={"round"} onClick={(x) => setIsAdding(false)}>
+              <MinusOutlined />
+              Cancel
+            </Button>
+          </Row>
+        </>
+      ) : (
+        <Row justify={"end"}>
+          <Button shape={"round"} onClick={(x) => setIsAdding(true)}>
+            <PlusOutlined />
+            Property
+          </Button>
+        </Row>
+      )}
+      <Divider />
       {parameters.map((param) => (
         <>
           <RequestFormItem name={param.name} inValue={param.in} />

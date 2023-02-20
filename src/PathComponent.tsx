@@ -28,47 +28,55 @@ const PathComponent: FC<PathComponentProps> = ({
   path,
   highlightedPath,
 }) => {
-  const { isLoading, isError, isSuccess, mutate, data, error, status } =
-    useMutation(
-      ["api-request"],
-      (request: {
-        method: "get" | "post" | "put" | "delete";
-        path: string;
-        values: RequestFormState;
-      }) => {
-        console.log(request.values);
-        const headers = Object.entries(request.values)
-          .filter(([key, value]) => value.in === "header")
-          .reduce<Record<string, any>>((acc, curr) => {
-            acc[curr[0]] = curr[1].value;
-            return acc;
-          }, {});
-        console.log({ headers });
-        const body = Object.entries(request.values)
-          .filter(([key, value]) => value.in === "body")
-          .reduce<Record<string, any>>((acc, curr) => {
-            acc[curr[0]] = curr[1].value;
-            return acc;
-          }, {});
-        console.log({ body });
-        const query = Object.entries(request.values)
-          .filter(([key, value]) => value.in === "query")
-          .reduce<Record<string, any>>((acc, curr) => {
-            acc[curr[0]] = curr[1].value;
-            return acc;
-          }, {});
-        console.log({ query });
+  const {
+    isLoading,
+    isError,
+    isSuccess,
+    mutate,
+    data,
+    error,
+    status,
+    variables,
+  } = useMutation(
+    ["api-request"],
+    (request: {
+      method: "get" | "post" | "put" | "delete";
+      path: string;
+      values: RequestFormState;
+    }) => {
+      console.log(request.values);
+      const headers = Object.entries(request.values)
+        .filter(([key, value]) => value.in === "header")
+        .reduce<Record<string, any>>((acc, curr) => {
+          acc[curr[0]] = curr[1].value;
+          return acc;
+        }, {});
+      console.log({ headers });
+      const body = Object.entries(request.values)
+        .filter(([key, value]) => value.in === "body")
+        .reduce<Record<string, any>>((acc, curr) => {
+          acc[curr[0]] = curr[1].value;
+          return acc;
+        }, {});
+      console.log({ body });
+      const query = Object.entries(request.values)
+        .filter(([key, value]) => value.in === "query")
+        .reduce<Record<string, any>>((acc, curr) => {
+          acc[curr[0]] = curr[1].value;
+          return acc;
+        }, {});
+      console.log({ query });
 
-        return axios.request({
-          method: request.method,
-          baseURL: server?.url,
-          url: request.path,
-          data: body,
-          params: query,
-          headers,
-        });
-      }
-    );
+      return axios.request({
+        method: request.method,
+        baseURL: server?.url,
+        url: request.path,
+        data: body,
+        params: query,
+        headers,
+      });
+    }
+  );
   const server = useComponentStore((state) => state.server);
 
   const onFinish = async (
@@ -99,6 +107,18 @@ const PathComponent: FC<PathComponentProps> = ({
               submit
             </Button>
           </RequestForm>
+          {(status === "success" || status === "error") &&
+          variables?.method === "get" ? (
+            <>
+              <Divider />
+              <ResponsePanel
+                isError={isError}
+                isSuccess={isSuccess}
+                data={data}
+                error={error as AxiosError}
+              />
+            </>
+          ) : null}
         </Collapse.Panel>
       )}
       {pathObject.post == null ? null : (
@@ -119,7 +139,8 @@ const PathComponent: FC<PathComponentProps> = ({
               submit
             </Button>
           </RequestForm>
-          {status === "success" || status === "error" ? (
+          {(status === "success" || status === "error") &&
+          variables?.method === "post" ? (
             <>
               <Divider />
               <ResponsePanel
@@ -151,7 +172,8 @@ const PathComponent: FC<PathComponentProps> = ({
               submit
             </Button>
           </RequestForm>
-          {status === "success" || status === "error" ? (
+          {(status === "success" || status === "error") &&
+          variables?.method === "put" ? (
             <>
               <Divider />
               <ResponsePanel
@@ -183,7 +205,8 @@ const PathComponent: FC<PathComponentProps> = ({
               submit
             </Button>
           </RequestForm>
-          {status === "success" || status === "error" ? (
+          {(status === "success" || status === "error") &&
+          variables?.method === "delete" ? (
             <>
               <Divider />
               <ResponsePanel
