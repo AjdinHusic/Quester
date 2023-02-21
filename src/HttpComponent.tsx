@@ -39,6 +39,8 @@ const HttpMethodSchemaSwitcher: FC<HttpMethodSchemaSwitcherProps> = ({
 
   const properties = Object.keys(schema?.properties ?? {});
 
+  if (!properties.length) return null;
+
   return (
     <>
       <Dropdown
