@@ -16,6 +16,7 @@ import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import ResponsePanel from "./ResponsePanel";
 import RequestForm, { RequestFormState } from "./RequestForm";
+import { useAuthStore } from "./App";
 
 export interface PathComponentProps {
   path: string;
@@ -28,6 +29,7 @@ const PathComponent: FC<PathComponentProps> = ({
   path,
   highlightedPath,
 }) => {
+  const { token } = useAuthStore();
   const {
     isLoading,
     isError,
@@ -73,7 +75,10 @@ const PathComponent: FC<PathComponentProps> = ({
         url: request.path,
         data: body,
         params: query,
-        headers,
+        headers: {
+          ...headers,
+          Authorization: "Bearer " + token,
+        },
       });
     }
   );

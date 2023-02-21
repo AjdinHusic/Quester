@@ -1,7 +1,7 @@
-import { FC } from "react";
-import { Card, Tag } from "antd";
+import {FC} from "react";
+import {Card, Tag} from "antd";
 import ReactJson from "react-json-view";
-import { AxiosError, AxiosResponse } from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 
 export interface ResponsePanelProps {
   isError?: boolean;
@@ -11,22 +11,20 @@ export interface ResponsePanelProps {
 }
 
 const ResponsePanel: FC<ResponsePanelProps> = ({
-  isError,
-  isSuccess,
-  data,
-  error,
-}) => {
+                                                 isError,
+                                                 isSuccess,
+                                                 data,
+                                                 error,
+                                               }) => {
   const errorColor = "rgba(236,9,28,0.8)";
-
-  console.log(data?.data ?? error?.response?.data);
 
   return (
     <Card
       title={
         <>
-          <span style={{ marginRight: 4 }}>response</span>
+          <span style={{marginRight: 4}}>response</span>
           <Tag color={isError ? "red" : isSuccess ? "green" : undefined}>
-            {data?.status ?? error?.response?.status}
+            {data?.status ?? error?.response?.status ?? error?.message}
           </Tag>
         </>
       }
@@ -35,8 +33,8 @@ const ResponsePanel: FC<ResponsePanelProps> = ({
         borderBottomColor: isError
           ? errorColor
           : isSuccess
-          ? "green"
-          : undefined,
+            ? "green"
+            : undefined,
       }}
       style={{
         textAlign: "left",
@@ -46,7 +44,7 @@ const ResponsePanel: FC<ResponsePanelProps> = ({
       {(data?.data ?? error?.response?.data) && (
         <ReactJson
           src={data?.data ?? error?.response?.data}
-          style={{ overflow: "auto" }}
+          style={{overflow: "auto"}}
           collapseStringsAfterLength={60}
         />
       )}
