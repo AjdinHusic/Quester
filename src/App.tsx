@@ -4,6 +4,7 @@ import { App as MainApp, Layout } from "antd";
 import React from "react";
 import "./index.css";
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import LoginPage from "./LoginPage";
 
 const client = new QueryClient();
@@ -14,11 +15,20 @@ interface AuthStore {
   setToken: (token: string | null) => void;
 }
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
-  token: null,
-  isLoggedIn: () => get()?.token != null,
-  setToken: (token) => set({ token }),
-}));
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set, get) => ({
+      token: null,
+      isLoggedIn: () => get()?.token != null,
+      setToken: (token) => set({ token }),
+    }),
+    {
+      name: "auth-store",
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: (state) => ({ token: state.token }),
+    }
+  )
+);
 
 function App() {
   const headerStyle: React.CSSProperties = {

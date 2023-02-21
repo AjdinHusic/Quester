@@ -94,12 +94,14 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
             <Button loading={isLoading} htmlType={"submit"}>
               Login
             </Button>
-            <ResponsePanel
-              data={data}
-              error={error as AxiosError}
-              isError={isError}
-              isSuccess={isSuccess}
-            />
+            {isSuccess || isError ? (
+              <ResponsePanel
+                data={data}
+                error={error as AxiosError}
+                isError={isError}
+                isSuccess={isSuccess}
+              />
+            ) : null}
           </Space>
         </Row>
       </Form>
