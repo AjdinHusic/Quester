@@ -10,6 +10,11 @@ export interface ResponsePanelProps {
   error?: AxiosError;
 }
 
+//returns a string "type" of input object
+export function isObj(obj: any) {
+  return typeof obj === "object" || Array.isArray(obj);
+}
+
 const ResponsePanel: FC<ResponsePanelProps> = ({
                                                  isError,
                                                  isSuccess,
@@ -17,6 +22,11 @@ const ResponsePanel: FC<ResponsePanelProps> = ({
                                                  error,
                                                }) => {
   const errorColor = "rgba(236,9,28,0.8)";
+  console.log(
+    data?.data ?? error?.response?.data,
+    JSON.parse(data?.data ?? error?.response?.data)
+  );
+  const responseSrc = data?.data ?? error?.response?.data;
 
   return (
     <Card
@@ -41,13 +51,13 @@ const ResponsePanel: FC<ResponsePanelProps> = ({
         borderColor: isError ? errorColor : isSuccess ? "green" : undefined,
       }}
     >
-      {(data?.data ?? error?.response?.data) && (
+      {(responseSrc) && isObj(responseSrc) ? (
         <ReactJson
           src={data?.data ?? error?.response?.data}
           style={{overflow: "auto"}}
           collapseStringsAfterLength={60}
-        />
-      )}
+        />) : <>{responseSrc}</>
+      }
     </Card>
   );
 };
