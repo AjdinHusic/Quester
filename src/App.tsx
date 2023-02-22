@@ -68,7 +68,7 @@ function App() {
 
   const contentStyle: React.CSSProperties = {
     textAlign: "center",
-    minHeight: 120,
+    minHeight: "calc(100vh - 60px)",
   };
 
   const { isLoggedIn, logOut } = useAuthStore();
