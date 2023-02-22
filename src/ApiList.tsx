@@ -1,14 +1,19 @@
-import {FC, useMemo, useState} from "react";
+import { FC, useMemo, useState } from "react";
 import axios from "axios";
-import {useQuery} from "react-query";
+import { useQuery } from "react-query";
 import Swagger from "./types/swagger";
 import PathComponent from "./PathComponent";
-import {Button, Col, Collapse, Dropdown, Input, Row, Space} from "antd";
-import {create} from "zustand";
+import { Button, Col, Collapse, Dropdown, Input, Row, Space } from "antd";
+import { create } from "zustand";
 import Components from "./types/components";
 import Server from "./types/server";
 import * as fuzzysort from "fuzzysort";
-import {SearchOutlined} from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  DownOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { useSearchStore } from "./App";
 
 interface ComponentStore {
   components: Components;
@@ -24,10 +29,10 @@ export const useComponentStore = create<ComponentStore>((set, get) => ({
   servers: [],
   server: null,
   setComponents: (components: Components) => {
-    set({components});
+    set({ components });
   },
-  setServers: (servers: Server[]) => set({servers}),
-  setServer: (server: Server) => set({server}),
+  setServers: (servers: Server[]) => set({ servers }),
+  setServer: (server: Server) => set({ server }),
 }));
 
 const ApiList: FC = () => {
@@ -39,7 +44,7 @@ const ApiList: FC = () => {
       state.server,
       state.setServer,
     ]);
-  const {data} = useQuery(
+  const { data } = useQuery(
     ["swagger"],
     async () =>
       await axios.get<Swagger>(
@@ -47,7 +52,7 @@ const ApiList: FC = () => {
       ),
     {
       onSuccess: (response) => {
-        console.log({response});
+        console.log({ response });
         setComponents(response.data.components ?? {});
         setServers(response.data.servers ?? []);
         setServer((response.data.servers ?? [])?.[0] ?? null);
@@ -57,11 +62,13 @@ const ApiList: FC = () => {
 
   const apis = data?.data.paths ?? {};
 
-  const [search, setSearch] = useState("");
+  //const [search, setSearch] = useState("");
+
+  const { search } = useSearchStore();
 
   const keyResults = useMemo<Array<[string, string | null]>>(() => {
     const keys = Object.keys(apis);
-    if (search.trim() === "") return keys.map(key => [key, null]);
+    if (search.trim() === "") return keys.map((key) => [key, null]);
     const results = fuzzysort.go(search, keys, {
       threshold: -1000,
     });
@@ -74,21 +81,8 @@ const ApiList: FC = () => {
   return (
     <>
       <Row justify={"center"} align={"middle"}>
-        <Col md={16} sm={24} lg={12} style={{margin: 18}}>
+        <Col md={16} sm={24} lg={12} style={{ margin: 18 }}>
           <Row justify={"space-between"} align={"top"}>
-            <Col>
-              <div style={{display: "flex", flexDirection: "column"}}>
-                <Input
-                  value={search}
-                  onChange={(x) => setSearch(x.target.value)}
-                  placeholder={"search"}
-                  prefix={<SearchOutlined/>}
-                />
-                <span style={{fontSize: 12}}>
-                  <b>{keyResults.length}</b> API results
-                </span>
-              </div>
-            </Col>
             <Col>
               <Dropdown
                 menu={{
@@ -100,7 +94,9 @@ const ApiList: FC = () => {
                   })),
                 }}
               >
-                <Button>{server?.url}</Button>
+                <Button>
+                  {server?.url ?? "Select server"} <CaretDownOutlined />
+                </Button>
               </Dropdown>
             </Col>
           </Row>
@@ -108,9 +104,18 @@ const ApiList: FC = () => {
       </Row>
       <Row justify={"center"}>
         <Col md={16} sm={24} lg={12}>
-          <Space direction={"vertical"} style={{width: "100%"}}>
+          <Space
+            direction={"vertical"}
+            style={{ width: "100%" }}
+            size={"large"}
+          >
             {keyResults.map((key) => (
-              <PathComponent key={key[0]} highlightedPath={key[1]} path={key[0]} pathObject={apis[key[0]]}/>
+              <PathComponent
+                key={key[0]}
+                highlightedPath={key[1]}
+                path={key[0]}
+                pathObject={apis[key[0]]}
+              />
             ))}
           </Space>
         </Col>

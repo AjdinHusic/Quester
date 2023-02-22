@@ -83,6 +83,7 @@ const PathComponent: FC<PathComponentProps> = ({
     }
   );
   const server = useComponentStore((state) => state.server);
+  console.log({ isLoading });
 
   const onFinish = async (
     method: "get" | "post" | "put" | "delete",
@@ -108,8 +109,8 @@ const PathComponent: FC<PathComponentProps> = ({
         >
           <RequestForm onFinish={(v) => onFinish("get", path, v)}>
             <HttpComponent method={pathObject.get} />
-            <Button type={"primary"} htmlType={"submit"}>
-              submit
+            <Button type={"primary"} htmlType={"submit"} loading={isLoading}>
+              Submit
             </Button>
           </RequestForm>
           {(status === "success" || status === "error") &&
@@ -207,7 +208,7 @@ const PathComponent: FC<PathComponentProps> = ({
           <RequestForm onFinish={(v) => onFinish("delete", path, v)}>
             <HttpComponent method={pathObject.delete} />
             <Button type={"primary"} htmlType={"submit"} loading={isLoading}>
-              submit
+              Submit
             </Button>
           </RequestForm>
           {(status === "success" || status === "error") &&
