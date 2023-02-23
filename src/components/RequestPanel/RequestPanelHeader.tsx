@@ -20,7 +20,10 @@ export const RequestPanelHeader: FC<{
       <Tag color={color} style={{ textTransform: "uppercase" }}>
         {verb}
       </Tag>
-      <span dangerouslySetInnerHTML={{ __html: highlightedPath ?? path }} />
+      <span
+        style={{ fontFamily: "monospace" }}
+        dangerouslySetInnerHTML={{ __html: highlightedPath ?? path }}
+      />
     </div>
   );
 };
