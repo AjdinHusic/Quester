@@ -10,21 +10,26 @@ on:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.check_version.outputs.has_changed == 'true' }}
 
     steps:
+      - uses: actions/checkout@v3
+          
       - id: check
         uses: EndBug/version-check@v2
         with:
           file-url: https://unpkg.com/quester-ui@latest/package.json
           static-checking: localIsNew
+          
+      - name: Version update detected
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
     
-      - uses: actions/checkout@v3
-      # Setup .npmrc file to publish to npm
-      - uses: actions/setup-node@v3
+      - name: Set up Node.js for NPM
+        if: steps.check.outputs.changed == 'true'
+        uses: actions/setup-node@v3
         with:
           node-version: '17.x'
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
