@@ -13,17 +13,18 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.check_version.outputs.has_changed == 'true' }}
 
     steps:
+      - id: check
+        uses: EndBug/version-check@v2
+        with:
+          file-url: https://unpkg.com/quester-ui@latest/package.json
+          static-checking: localIsNew
+    
       - uses: actions/checkout@v3
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v3
         with:
           node-version: '17.x'
           registry-url: 'https://registry.npmjs.org'
-
-      - name: Check if version has changed
-        id: check_version
-        run: echo ::set-output name=has_changed::$(git diff --name-only HEAD~1 HEAD | grep -c "package.json")
-     
 
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
