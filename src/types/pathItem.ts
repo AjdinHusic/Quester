@@ -25,10 +25,11 @@ export interface PathObject {
   get?: HttpMethod;
   post?: HttpMethod;
   put?: HttpMethod;
+  patch?: HttpMethod;
   delete?: HttpMethod;
   // other HTTP methods as needed
 }
 
 export default interface PathItem {
-  [path: string]: PathObject
+  [path: string]: PathObject;
 }

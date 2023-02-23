@@ -52,7 +52,6 @@ const ApiList: FC = () => {
       ),
     {
       onSuccess: (response) => {
-        console.log({ response });
         setComponents(response.data.components ?? {});
         setServers(response.data.servers ?? []);
         setServer((response.data.servers ?? [])?.[0] ?? null);

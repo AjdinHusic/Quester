@@ -149,7 +149,11 @@ const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
       <Divider />
       {parameters.map((param) => (
         <>
-          <RequestFormItem name={param.name} inValue={param.in} />
+          <RequestFormItem
+            key={param.name}
+            name={param.name}
+            inValue={param.in}
+          />
         </>
       ))}
       <Divider />

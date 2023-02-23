@@ -5,7 +5,7 @@ import { Tag } from "antd";
 export const RequestPanelHeader: FC<{
   verb: Verb;
   path: string;
-  highlightedPath: string;
+  highlightedPath?: string | null;
 }> = ({ verb, path, highlightedPath }) => {
   const color = {
     get: "green",

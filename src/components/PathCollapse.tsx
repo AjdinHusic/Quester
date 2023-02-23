@@ -3,6 +3,7 @@ import { Collapse } from "antd";
 import { PathObject } from "../types/pathItem";
 import { RequestPanelContent } from "./RequestPanel/RequestPanelContent";
 import { RequestPanelHeader } from "./RequestPanel/RequestPanelHeader";
+import { Verb } from "../types/verb";
 
 export interface PathComponentProps {
   path: string;
@@ -17,8 +18,8 @@ const PathCollapse: FC<PathComponentProps> = ({
 }) => {
   return (
     <Collapse style={{ width: "100%" }}>
-      {["get", "post", "put", "patch", "delete"].map((verb) =>
-        verb in pathObject ? (
+      {(["get", "post", "put", "patch", "delete"] as Verb[]).map((verb) =>
+        verb in pathObject && pathObject[verb] !== undefined ? (
           <Collapse.Panel
             key={`${path}_${verb}`}
             header={
@@ -31,7 +32,7 @@ const PathCollapse: FC<PathComponentProps> = ({
           >
             <RequestPanelContent
               verb={verb}
-              method={pathObject[verb]}
+              method={pathObject[verb]!}
               path={path}
             />
           </Collapse.Panel>
