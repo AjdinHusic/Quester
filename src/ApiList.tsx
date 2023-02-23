@@ -2,7 +2,7 @@ import { FC, useMemo, useState } from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
 import Swagger from "./types/swagger";
-import PathComponent from "./PathComponent";
+import PathCollapse from "./components/PathCollapse";
 import { Button, Col, Collapse, Dropdown, Input, Row, Space } from "antd";
 import { create } from "zustand";
 import Components from "./types/components";
@@ -61,9 +61,6 @@ const ApiList: FC = () => {
   );
 
   const apis = data?.data.paths ?? {};
-
-  //const [search, setSearch] = useState("");
-
   const { search } = useSearchStore();
 
   const keyResults = useMemo<Array<[string, string | null]>>(() => {
@@ -110,7 +107,7 @@ const ApiList: FC = () => {
             size={"large"}
           >
             {keyResults.map((key) => (
-              <PathComponent
+              <PathCollapse
                 key={key[0]}
                 highlightedPath={key[1]}
                 path={key[0]}
