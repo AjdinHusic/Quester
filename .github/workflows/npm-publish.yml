@@ -44,4 +44,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-        run: npm publish
+        run: |
+          cp README.md dist/
+          cp LICENSE dist/
+          cd dist
+          pwd
+          npm publish
