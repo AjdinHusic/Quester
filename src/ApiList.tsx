@@ -14,6 +14,7 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import { useSearchStore } from "./App";
+import { env } from "./utils/env";
 
 interface ComponentStore {
   components: Components;
@@ -47,9 +48,7 @@ const ApiList: FC = () => {
   const { data } = useQuery(
     ["swagger"],
     async () =>
-      await axios.get<Swagger>(
-        "https://localhost:5001/swagger/v1/swagger.json"
-      ),
+      await axios.get<Swagger>(env("SWAGGER_URL", "/swagger/v1/swagger.json")),
     {
       onSuccess: (response) => {
         setComponents(response.data.components ?? {});

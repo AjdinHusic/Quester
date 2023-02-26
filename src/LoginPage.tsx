@@ -2,13 +2,11 @@ import { FC } from "react";
 import { Button, Form, Input, Layout, Row, Space, Typography } from "antd";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
-import viteReact from "@vitejs/plugin-react";
 import { UserOutlined } from "@ant-design/icons";
 import ResponsePanel from "./ResponsePanel";
-import { Simulate } from "react-dom/test-utils";
-import error = Simulate.error;
 import { useAuthStore } from "./App";
 import { v4 as uuidv4 } from "uuid";
+import { env } from "./utils/env";
 
 export interface LoginPageProps {}
 
@@ -17,7 +15,7 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
     ["login"],
     ({ username, password }: { username: string; password: string }) => {
       return axios.post(
-        import.meta.env.VITE_LOGIN_URL ?? "api/auth/login",
+        env("LOGIN_PATH", "api/auth/login"),
         {
           username,
           password,
