@@ -15,9 +15,8 @@ export function env(
   safeKeys.push(key);
   const nonBrowser = import.meta.env;
   const together = { ...window.__ENV, ...nonBrowser };
-  console.log({ together });
   for (const safeKey of safeKeys) {
-    if (safeKey in together) {
+    if (safeKey in together && together[safeKey] !== `%(${safeKey})`) {
       return together[safeKey];
     }
   }

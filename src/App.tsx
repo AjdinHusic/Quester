@@ -16,6 +16,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import LoginPage from "./LoginPage";
 import { LogoutOutlined, SearchOutlined } from "@ant-design/icons";
+import { env } from "./utils/env";
 
 const client = new QueryClient();
 
@@ -77,7 +78,7 @@ function App() {
   return (
     <MainApp>
       <QueryClientProvider client={client}>
-        {isLoggedIn() ? (
+        {isLoggedIn() || env("LOGIN_PATH", "") == "" ? (
           <Layout>
             <Layout.Header style={headerStyle} draggable={true}>
               <Row align={"middle"} justify={"space-between"}>

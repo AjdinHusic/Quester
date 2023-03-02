@@ -17,8 +17,8 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
       return axios.post(
         env("LOGIN_PATH", "api/auth/login"),
         {
-          username,
-          password,
+          [env("LOGIN_USERNAME_PROPERTY", "username")]: username,
+          [env("LOGIN_PASSWORD_PROPERTY", "password")]: password,
         },
         {
           headers: {
