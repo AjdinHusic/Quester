@@ -1,8 +1,5 @@
 {
   "name": "quester-ui",
-  "publishConfig": {
-    "registry": "https://unpkg.com/quester-ui"
-  },
   "version": "1.0.3",
   "type": "module",
   "scripts": {
