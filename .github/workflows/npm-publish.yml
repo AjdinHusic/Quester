@@ -50,4 +50,6 @@ jobs:
           cp package.json dist/
           cd dist
           pwd
+          npm pkg delete dependencies
+          npm pkg delete devDependencies
           npm publish
