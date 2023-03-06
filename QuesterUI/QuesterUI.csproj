@@ -1,9 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Version>1.0.4</Version>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +16,10 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE" Pack="true" PackagePath=""/>
   </ItemGroup>
 
   <ItemGroup>

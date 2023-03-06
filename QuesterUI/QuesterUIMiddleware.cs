@@ -9,11 +9,11 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Quester.Extensions;
+namespace QuesterUI;
 
 public class QuesterUIMiddleware
 {
-    private const string EmbeddedFileNamespace = "Quester.Extensions.node_modules.quester_ui";
+    private const string EmbeddedFileNamespace = "QuesterUI.node_modules.quester_ui";
 
     private readonly QuesterUIOptions _options;
     private readonly StaticFileMiddleware _staticFileMiddleware;
@@ -77,6 +77,32 @@ public class QuesterUIMiddleware
         await using var stream = _options.IndexStream();
         using var reader = new StreamReader(stream);
         var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
+        foreach (var entry in GetIndexArguments())
+        {
+            htmlBuilder.Replace(entry.Key, entry.Value);
+        }
         await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+    }
+
+    private IDictionary<string, string> GetIndexArguments()
+    {
+        var indexArguments = new Dictionary<string, string>()
+        {
+            { "%(SWAGGER_URL)", _options.SwaggerUrl },
+        };
+        if (!string.IsNullOrWhiteSpace(_options.LoginPath))
+        {
+            indexArguments.Add("%(LOGIN_PATH)", _options.LoginPath);
+        }
+        if (!string.IsNullOrWhiteSpace(_options.LoginUsernameProperty))
+        {
+            indexArguments.Add("%(LOGIN_USERNAME_PROPERTY)", _options.LoginUsernameProperty);
+        }
+        if (!string.IsNullOrWhiteSpace(_options.LoginUsernameProperty))
+        {
+            indexArguments.Add("%(LOGIN_PASSWORD_PROPERTY)", _options.LoginPasswordProperty);
+        }
+
+        return indexArguments;
     }
 }

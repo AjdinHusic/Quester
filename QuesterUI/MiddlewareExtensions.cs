@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
-namespace Quester.Extensions;
+
+namespace QuesterUI;
 
 public static class QuesterUI
 {
