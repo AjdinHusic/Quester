@@ -1,9 +1,10 @@
 import { FC } from "react";
-import { Card, Tag } from "antd";
+import { Card, Row, Space, Tag, Typography } from "antd";
 import ReactJson from "react-json-view";
 import { AxiosError, AxiosResponse } from "axios";
 
 export interface ResponsePanelProps {
+  uri?: string;
   isError?: boolean;
   isSuccess?: boolean;
   data?: AxiosResponse;
@@ -16,6 +17,7 @@ export function isObj(obj: any) {
 }
 
 const ResponsePanel: FC<ResponsePanelProps> = ({
+  uri,
   isError,
   isSuccess,
   data,
@@ -27,12 +29,24 @@ const ResponsePanel: FC<ResponsePanelProps> = ({
   return (
     <Card
       title={
-        <>
-          <span style={{ marginRight: 4 }}>response</span>
-          <Tag color={isError ? "red" : isSuccess ? "green" : undefined}>
-            {data?.status ?? error?.response?.status ?? error?.message}
-          </Tag>
-        </>
+        <Space direction={"vertical"} style={{ padding: 6 }}>
+          <Row>
+            <span style={{ marginRight: 4 }}>response</span>
+            <Tag color={isError ? "red" : isSuccess ? "green" : undefined}>
+              {data?.status ?? error?.response?.status ?? error?.message}
+            </Tag>
+          </Row>
+          <Row>
+            <Typography.Paragraph
+              style={{
+                fontSize: 11,
+                color: "inherit",
+              }}
+            >
+              {uri}
+            </Typography.Paragraph>
+          </Row>
+        </Space>
       }
       headStyle={{
         color: isError ? errorColor : isSuccess ? "green" : undefined,

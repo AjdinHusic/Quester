@@ -3,7 +3,7 @@ import { Button, Form, Input, Layout, Row, Space, Typography } from "antd";
 import { useMutation } from "react-query";
 import axios, { AxiosError } from "axios";
 import { UserOutlined } from "@ant-design/icons";
-import ResponsePanel from "./ResponsePanel";
+import ResponsePanel from "./components/RequestPanel/ResponsePanel";
 import { useAuthStore } from "./App";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "./utils/env";

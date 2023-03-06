@@ -8,7 +8,7 @@ import RequestForm, { RequestFormState } from "../../RequestForm";
 import axios, { AxiosError } from "axios";
 import HttpComponent from "../../HttpComponent";
 import { Button, Divider } from "antd";
-import ResponsePanel from "../../ResponsePanel";
+import ResponsePanel from "./ResponsePanel";
 
 export const RequestPanelContent: FC<{
   method: HttpMethod;
@@ -67,6 +67,9 @@ export const RequestPanelContent: FC<{
     }
   );
 
+  const config = data?.config ?? (error as AxiosError)?.config;
+  const uri = axios.getUri(config);
+
   const onFinish = async (values: RequestFormState) => {
     mutate({ values });
   };
@@ -83,6 +86,7 @@ export const RequestPanelContent: FC<{
         <>
           <Divider />
           <ResponsePanel
+            uri={uri}
             isError={isError}
             isSuccess={isSuccess}
             data={data}
