@@ -1,40 +1,14 @@
-import { FC, useMemo, useState } from "react";
+import {FC, useMemo} from "react";
 import axios from "axios";
-import { useQuery } from "react-query";
+import {useQuery} from "react-query";
 import Swagger from "./types/swagger";
 import PathCollapse from "./components/PathCollapse";
-import { Button, Col, Collapse, Dropdown, Input, Row, Space } from "antd";
-import { create } from "zustand";
-import Components from "./types/components";
-import Server from "./types/server";
+import {Button, Col, Dropdown, Row, Space} from "antd";
 import * as fuzzysort from "fuzzysort";
-import {
-  CaretDownOutlined,
-  DownOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import { useSearchStore } from "./App";
-import { env } from "./utils/env";
-
-interface ComponentStore {
-  components: Components;
-  servers: Server[];
-  server: Server | null;
-  setComponents: (component: Components) => void;
-  setServers: (servers: Server[]) => void;
-  setServer: (server: Server) => void;
-}
-
-export const useComponentStore = create<ComponentStore>((set, get) => ({
-  components: {},
-  servers: [],
-  server: null,
-  setComponents: (components: Components) => {
-    set({ components });
-  },
-  setServers: (servers: Server[]) => set({ servers }),
-  setServer: (server: Server) => set({ server }),
-}));
+import {CaretDownOutlined,} from "@ant-design/icons";
+import {env} from "./utils/env";
+import {useSearchStore} from "./stores/useSearchStore";
+import {useComponentStore} from "./stores/useComponentsStore";
 
 const ApiList: FC = () => {
   const [setComponents, setServers, servers, server, setServer] =
@@ -45,7 +19,7 @@ const ApiList: FC = () => {
       state.server,
       state.setServer,
     ]);
-  const { data } = useQuery(
+  const {data} = useQuery(
     ["swagger"],
     async () =>
       await axios.get<Swagger>(env("SWAGGER_URL", "/swagger/v1/swagger.json")),
@@ -59,7 +33,7 @@ const ApiList: FC = () => {
   );
 
   const apis = data?.data.paths ?? {};
-  const { search } = useSearchStore();
+  const {search} = useSearchStore();
 
   const keyResults = useMemo<Array<[string, string | null]>>(() => {
     const keys = Object.keys(apis);
@@ -76,7 +50,7 @@ const ApiList: FC = () => {
   return (
     <>
       <Row justify={"center"} align={"middle"}>
-        <Col md={16} sm={24} lg={12} style={{ margin: 18 }}>
+        <Col md={16} sm={24} lg={12} style={{margin: 18}}>
           <Row justify={"space-between"} align={"top"}>
             <Col>
               <Dropdown
@@ -90,7 +64,7 @@ const ApiList: FC = () => {
                 }}
               >
                 <Button>
-                  {server?.url ?? "Select server"} <CaretDownOutlined />
+                  {server?.url ?? "Select server"} <CaretDownOutlined/>
                 </Button>
               </Dropdown>
             </Col>
@@ -101,7 +75,7 @@ const ApiList: FC = () => {
         <Col md={16} sm={24} lg={12}>
           <Space
             direction={"vertical"}
-            style={{ width: "100%" }}
+            style={{width: "100%"}}
             size={"large"}
           >
             {keyResults.map((key) => (

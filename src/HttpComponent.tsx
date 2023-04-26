@@ -1,14 +1,14 @@
-import { Button, Divider, Dropdown, Form, Input, Row, Space } from "antd";
-import React, { FC, useState } from "react";
-import { HttpMethod } from "./types/pathItem";
-import { useComponentStore } from "./ApiList";
+import {Button, Divider, Dropdown, Form, Input, Row, Space} from "antd";
+import React, {FC, useState} from "react";
+import {HttpMethod} from "./types/pathItem";
 import {
   CaretDownOutlined,
   MinusOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
-import { RequestFormItem } from "./RequestForm";
+import {RequestFormItem} from "./RequestForm";
 import Parameter from "./types/parameter";
+import {useComponentStore} from "./stores/useComponentsStore";
 
 export interface HttpComponentProps {
   method: HttpMethod;
@@ -19,8 +19,8 @@ export interface HttpMethodSchemaSwitcherProps {
 }
 
 const HttpMethodSchemaSwitcher: FC<HttpMethodSchemaSwitcherProps> = ({
-  method,
-}) => {
+                                                                       method,
+                                                                     }) => {
   const components = useComponentStore((state) => state.components);
 
   const contentTypes = Object.keys(method.requestBody?.content ?? {});
@@ -57,21 +57,21 @@ const HttpMethodSchemaSwitcher: FC<HttpMethodSchemaSwitcherProps> = ({
         <Button
           type={"dashed"}
           block
-          style={{ marginBottom: 10 }}
-          icon={<CaretDownOutlined />}
+          style={{marginBottom: 10}}
+          icon={<CaretDownOutlined/>}
         >
           {contentType}
         </Button>
       </Dropdown>
 
       {properties.map((property) => (
-        <RequestFormItem key={property} name={property} inValue={"body"} />
+        <RequestFormItem key={property} name={property} inValue={"body"}/>
       ))}
     </>
   );
 };
 
-const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
+const HttpComponent: FC<HttpComponentProps> = ({method}) => {
   const [additionalParams, setAdditionalParams] = useState<Parameter[]>([]);
   const parameters = (method.parameters ?? []).concat(additionalParams);
 
@@ -105,7 +105,7 @@ const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
           <Row justify={"space-between"}>
             <Space direction={"horizontal"} align={"start"}>
               <Button type={"primary"} onClick={onAddParameter}>
-                <PlusOutlined /> Add
+                <PlusOutlined/> Add
               </Button>
               <Form.Item>
                 <Input
@@ -126,14 +126,14 @@ const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
               >
                 <Button>
                   <Space>
-                    {addIn ?? "in"} <CaretDownOutlined />
+                    {addIn ?? "in"} <CaretDownOutlined/>
                   </Space>
                 </Button>
               </Dropdown>
             </Space>
 
             <Button shape={"round"} onClick={(x) => setIsAdding(false)}>
-              <MinusOutlined />
+              <MinusOutlined/>
               Cancel
             </Button>
           </Row>
@@ -141,12 +141,12 @@ const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
       ) : (
         <Row justify={"end"}>
           <Button shape={"round"} onClick={(x) => setIsAdding(true)}>
-            <PlusOutlined />
+            <PlusOutlined/>
             Property
           </Button>
         </Row>
       )}
-      <Divider />
+      <Divider/>
       {parameters.map((param) => (
         <>
           <RequestFormItem
@@ -156,9 +156,9 @@ const HttpComponent: FC<HttpComponentProps> = ({ method }) => {
           />
         </>
       ))}
-      <Divider />
-      <HttpMethodSchemaSwitcher method={method} />
-      <Divider />
+      <Divider/>
+      <HttpMethodSchemaSwitcher method={method}/>
+      <Divider/>
     </>
   );
 };

@@ -1,22 +1,25 @@
-import { FC } from "react";
-import { HttpMethod } from "../../types/pathItem";
-import { Verb } from "../../types/verb";
-import { useAuthStore } from "../../App";
-import { useComponentStore } from "../../ApiList";
-import { useMutation } from "react-query";
-import RequestForm, { RequestFormState } from "../../RequestForm";
-import axios, { AxiosError } from "axios";
+import {FC} from "react";
+import {HttpMethod} from "../../types/pathItem";
+import {Verb} from "../../types/verb";
+import {useMutation} from "react-query";
+import RequestForm, {RequestFormState} from "../../RequestForm";
+import axios, {AxiosError} from "axios";
 import HttpComponent from "../../HttpComponent";
-import { Button, Divider } from "antd";
+import {Button, Divider} from "antd";
 import ResponsePanel from "./ResponsePanel";
+import {useAuthStore} from "../../stores/useAuthStore";
+import {useComponentStore} from "../../stores/useComponentsStore";
+import {useHistoryStore} from "../../stores/useHistoryStore";
 
 export const RequestPanelContent: FC<{
   method: HttpMethod;
   path: string;
   verb: Verb;
-}> = ({ method, path, verb }) => {
-  const { token } = useAuthStore();
+}> = ({method, path, verb}) => {
+  const {token} = useAuthStore();
   const server = useComponentStore((state) => state.server);
+
+  const addHistoryItem = useHistoryStore(state => state.addHistoryItem);
 
   const {
     isLoading,
@@ -37,26 +40,33 @@ export const RequestPanelContent: FC<{
           acc[curr[0]] = curr[1].value;
           return acc;
         }, {});
-      console.log({ headers });
+      console.log({headers});
       const body = Object.entries(request.values)
         .filter(([key, value]) => value.in === "body")
         .reduce<Record<string, any>>((acc, curr) => {
           acc[curr[0]] = curr[1].value;
           return acc;
         }, {});
-      console.log({ body });
+      console.log({body});
       const query = Object.entries(request.values)
         .filter(([key, value]) => value.in === "query")
         .reduce<Record<string, any>>((acc, curr) => {
           acc[curr[0]] = curr[1].value;
           return acc;
         }, {});
-      console.log({ query });
+      const pathParams = Object.entries(request.values)
+        .filter(([key, value]) => value.in === "path")
+        .reduce<Record<string, any>>((acc, curr) => {
+          acc[curr[0]] = curr[1].value;
+          return acc;
+        }, {});
+
+      const url = path.replaceAll(/{(.*?)}/g, (r, a) => a in pathParams ? pathParams[a] : r)
 
       return axios.request({
         method: verb,
         baseURL: server?.url,
-        url: path,
+        url,
         data: body,
         params: query,
         headers: {
@@ -64,6 +74,13 @@ export const RequestPanelContent: FC<{
           Authorization: "Bearer " + token,
         },
       });
+    }, {
+      onSettled(response, error) {
+        const config = response?.config ?? (error as AxiosError)?.config;
+        const uri = axios.getUri(config);
+        if (uri)
+          addHistoryItem(uri);
+      }
     }
   );
 
@@ -71,20 +88,20 @@ export const RequestPanelContent: FC<{
   const uri = axios.getUri(config);
 
   const onFinish = async (values: RequestFormState) => {
-    mutate({ values });
+    mutate({values});
   };
 
   return (
     <>
       <RequestForm onFinish={(v) => onFinish(v)}>
-        <HttpComponent method={method} />
+        <HttpComponent method={method}/>
         <Button type={"primary"} htmlType={"submit"} loading={isLoading}>
           Submit
         </Button>
       </RequestForm>
       {status === "success" || status === "error" ? (
         <>
-          <Divider />
+          <Divider/>
           <ResponsePanel
             uri={uri}
             isError={isError}

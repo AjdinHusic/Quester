@@ -1,19 +1,20 @@
-import { FC } from "react";
-import { Button, Form, Input, Layout, Row, Space, Typography } from "antd";
-import { useMutation } from "react-query";
-import axios, { AxiosError } from "axios";
-import { UserOutlined } from "@ant-design/icons";
+import {FC} from "react";
+import {Button, Form, Input, Layout, Row, Space, Typography} from "antd";
+import {useMutation} from "react-query";
+import axios, {AxiosError} from "axios";
+import {UserOutlined} from "@ant-design/icons";
 import ResponsePanel from "./components/RequestPanel/ResponsePanel";
-import { useAuthStore } from "./App";
-import { v4 as uuidv4 } from "uuid";
-import { env } from "./utils/env";
+import {v4 as uuidv4} from "uuid";
+import {env} from "./utils/env";
+import {useAuthStore} from "./stores/useAuthStore";
 
-export interface LoginPageProps {}
+export interface LoginPageProps {
+}
 
 const LoginPage: FC<LoginPageProps> = ({}) => {
-  const { data, error, isLoading, isSuccess, isError, mutate } = useMutation(
+  const {data, error, isLoading, isSuccess, isError, mutate} = useMutation(
     ["login"],
-    ({ username, password }: { username: string; password: string }) => {
+    ({username, password}: { username: string; password: string }) => {
       return axios.post(
         env("LOGIN_PATH", "api/auth/login"),
         {
@@ -29,13 +30,13 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
     },
     {
       onSuccess: (response) => {
-        console.log({ response });
+        console.log({response});
         setToken(response.data.token);
       },
     }
   );
 
-  const { setToken } = useAuthStore();
+  const {setToken} = useAuthStore();
 
   const onFinish = (values: any) => {
     mutate({
@@ -45,9 +46,9 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
   };
 
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{height: "100vh"}}>
       <Form layout={"vertical"} onFinish={onFinish}>
-        <Row justify={"center"} align={"middle"} style={{ height: "100%" }}>
+        <Row justify={"center"} align={"middle"} style={{height: "100%"}}>
           <Space
             direction={"vertical"}
             align={"center"}
@@ -66,13 +67,13 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
                 isError
                   ? "error"
                   : isLoading
-                  ? "validating"
-                  : isSuccess
-                  ? "success"
-                  : undefined
+                    ? "validating"
+                    : isSuccess
+                      ? "success"
+                      : undefined
               }
             >
-              <Input suffix={<UserOutlined />} />
+              <Input suffix={<UserOutlined/>}/>
             </Form.Item>
             <Form.Item
               name={"password"}
@@ -81,13 +82,13 @@ const LoginPage: FC<LoginPageProps> = ({}) => {
                 isError
                   ? "error"
                   : isLoading
-                  ? "validating"
-                  : isSuccess
-                  ? "success"
-                  : undefined
+                    ? "validating"
+                    : isSuccess
+                      ? "success"
+                      : undefined
               }
             >
-              <Input.Password />
+              <Input.Password/>
             </Form.Item>
             <Button loading={isLoading} htmlType={"submit"}>
               Login
