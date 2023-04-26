@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "quester-ui": "^1.0.3"
+    "quester-ui": "^1.0.4"
   }
 }
